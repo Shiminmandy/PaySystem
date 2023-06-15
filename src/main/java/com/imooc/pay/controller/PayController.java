@@ -1,6 +1,7 @@
 package com.imooc.pay.controller;
 
 import com.imooc.pay.service.impl.PayService;
+import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.model.PayResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,20 @@ public class PayController {
     @Autowired
     private PayService payService;
     @GetMapping("/create")
-    public ModelAndView create(@RequestParam("orderId") String orderId, @RequestParam("amount") BigDecimal amount){
-        PayResponse response = payService.create(orderId, amount);
+    public ModelAndView create(@RequestParam("orderId") String orderId, @RequestParam("amount") BigDecimal amount, @RequestParam("payType") BestPayTypeEnum bestPayTypeEnum){
+        PayResponse response = payService.create(orderId, amount, bestPayTypeEnum);
 
-        Map map = new HashMap<>();
-        map.put("codeUrl", response.getCodeUrl());
-        return new ModelAndView("create",map);
+        //支付方式不同，渲染不同, WXPAY_NATIVE使用codeUrl, ALIPAY_PC 使用 body
+        Map<String,String> map = new HashMap<>();
+        if (bestPayTypeEnum == BestPayTypeEnum.WXPAY_NATIVE){
+            map.put("codeUrl", response.getCodeUrl());
+            return new ModelAndView("createForWxNative",map);
+        }else if (bestPayTypeEnum == BestPayTypeEnum.ALIPAY_PC){
+            map.put("body",response.getBody());
+            return new ModelAndView("createForAlipayPc",map);
+        }
+
+        throw new RuntimeException("暂不支持的支付类型");
 
     }
     @PostMapping("/notify")
