@@ -53,7 +53,7 @@ public class PayService implements IPayService {
         // 1。签名检验
         PayResponse payResponse = bestPayService.asyncNotify(notifyData);
         log.info("payResponse={}", payResponse);
-        // 2。金额校验
+        // 2。金额校验(未完成）
 
         // 3。修改订单支付状态
         // 4。告诉微信不要再通知了
