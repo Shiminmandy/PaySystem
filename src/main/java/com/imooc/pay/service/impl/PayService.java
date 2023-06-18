@@ -50,7 +50,7 @@ public class PayService implements IPayService {
         request.setPayTypeEnum(bestPayTypeEnum);
 
         PayResponse response = bestPayService.pay(request);
-        log.info("response={}",response);
+        log.info("发起支付 response={}",response);
 
         return response;
     }
@@ -62,7 +62,7 @@ public class PayService implements IPayService {
     public String asyncNotify(String notifyData){
         // 1。签名检验
         PayResponse payResponse = bestPayService.asyncNotify(notifyData);
-        log.info("payResponse={}", payResponse);
+        log.info("异步通知 payResponse={}", payResponse);
         // 2。金额校验(从数据库查询订单）
         //比较严重，正常情况下不会发生，发出告警：钉钉，短信
         PayInfo payInfo = payInfoMapper.selectByOrderNo(Long.parseLong(payResponse.getOrderId()));
@@ -78,6 +78,8 @@ public class PayService implements IPayService {
             }
             // 如果金额一致，3。修改订单支付状态
             payInfo.setPlatformStatus(OrderStatusEnum.SUCCESS.name());
+            payInfo.setPlatformNumber(payResponse.getOutTradeNo());
+            payInfo.setUpdateTime(null);
             payInfoMapper.updateByPrimaryKeySelective(payInfo);
         }
 
@@ -92,5 +94,10 @@ public class PayService implements IPayService {
         }
         throw new RuntimeException("异步通知中错误的支付平台");
 
+    }
+
+    @Override
+    public PayInfo queryByOrderId(String orderId) {
+        return payInfoMapper.selectByOrderNo(Long.parseLong(orderId));
     }
 }

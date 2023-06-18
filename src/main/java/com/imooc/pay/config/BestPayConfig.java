@@ -14,12 +14,7 @@ import org.springframework.stereotype.Component;
 public class BestPayConfig {
     // @Bean : 项目启动时就会启动这段代码
     @Bean
-    public BestPayService bestPayService(){
-        WxPayConfig wxPayConfig = new WxPayConfig();
-        wxPayConfig.setAppId("wxd898fcb01713c658");
-        wxPayConfig.setMchId("1483469312");
-        wxPayConfig.setMchKey("7mdApPMfXddfWWbbP4DUaVYm2wjyh3v3");
-        wxPayConfig.setNotifyUrl("http://127.0.0.1");
+    public BestPayService bestPayService(WxPayConfig wxPayConfig){
 
         AliPayConfig aliPayConfig = new AliPayConfig();
         aliPayConfig.setAppId("2018062960540016");
@@ -34,5 +29,17 @@ public class BestPayConfig {
 
 
         return bestPayService;
+    }
+
+    @Bean
+    public WxPayConfig wxPayConfig(){
+        WxPayConfig wxPayConfig = new WxPayConfig();
+        wxPayConfig.setAppId("wxd898fcb01713c658");
+        wxPayConfig.setMchId("1483469312");
+        wxPayConfig.setMchKey("7mdApPMfXddfWWbbP4DUaVYm2wjyh3v3");
+        wxPayConfig.setNotifyUrl("http://127.0.0.1");
+        wxPayConfig.setReturnUrl("http://127.0.0.1");
+
+        return wxPayConfig;
     }
 }
