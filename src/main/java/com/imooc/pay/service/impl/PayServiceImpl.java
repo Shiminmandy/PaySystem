@@ -4,14 +4,12 @@ import com.imooc.pay.dao.PayInfoMapper;
 import com.imooc.pay.enums.PayPlatformEnum;
 import com.imooc.pay.pojo.PayInfo;
 import com.imooc.pay.service.IPayService;
-import com.lly835.bestpay.config.WxPayConfig;
 import com.lly835.bestpay.enums.BestPayPlatformEnum;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.enums.OrderStatusEnum;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
 import com.lly835.bestpay.service.BestPayService;
-import com.lly835.bestpay.service.impl.BestPayServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 @Slf4j
 @Service
-public class PayService implements IPayService {
+public class PayServiceImpl implements IPayService {
     @Autowired
     private BestPayService bestPayService;
     @Autowired
@@ -84,7 +82,7 @@ public class PayService implements IPayService {
         }
 
         //TODO pay发送MQ消息，mall接受MQ消息
-        
+
         // 4。告诉微信不要再通知了
         if (payResponse.getPayPlatformEnum() == BestPayPlatformEnum.WX){
             return "<xml>\n" +

@@ -1,7 +1,7 @@
 package com.imooc.pay.controller;
 
 import com.imooc.pay.pojo.PayInfo;
-import com.imooc.pay.service.impl.PayService;
+import com.imooc.pay.service.impl.PayServiceImpl;
 import com.lly835.bestpay.config.WxPayConfig;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.model.PayResponse;
@@ -22,7 +22,7 @@ public class PayController {
     @Autowired
     private WxPayConfig wxPayConfig;
     @Autowired
-    private PayService payService;
+    private PayServiceImpl payService;
     @GetMapping("/create")
     public ModelAndView create(@RequestParam("orderId") String orderId, @RequestParam("amount") BigDecimal amount, @RequestParam("payType") BestPayTypeEnum bestPayTypeEnum){
         PayResponse response = payService.create(orderId, amount, bestPayTypeEnum);
