@@ -1,5 +1,6 @@
 package com.imooc.pay.service.impl;
 
+import com.google.gson.Gson;
 import com.imooc.pay.dao.PayInfoMapper;
 import com.imooc.pay.enums.PayPlatformEnum;
 import com.imooc.pay.pojo.PayInfo;
@@ -11,6 +12,7 @@ import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
 import com.lly835.bestpay.service.BestPayService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +20,13 @@ import java.math.BigDecimal;
 @Slf4j
 @Service
 public class PayServiceImpl implements IPayService {
+    private final static String QUEUE_PAY_NOTIFY = "payNotify";
     @Autowired
     private BestPayService bestPayService;
     @Autowired
     private PayInfoMapper payInfoMapper;
+    @Autowired
+    private AmqpTemplate amqpTemplate;
 
     /**
      * 创建/发起支付
@@ -82,7 +87,7 @@ public class PayServiceImpl implements IPayService {
         }
 
         //TODO pay发送MQ消息，mall接受MQ消息
-
+        amqpTemplate.convertAndSend(QUEUE_PAY_NOTIFY,new Gson().toJson(payInfo));
         // 4。告诉微信不要再通知了
         if (payResponse.getPayPlatformEnum() == BestPayPlatformEnum.WX){
             return "<xml>\n" +
